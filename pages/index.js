@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import classNames from "classnames";
+import { getAllNodes } from "next-mdx/server";
+import Link from "next/link";
 
-const index = () => {
+const index = ({ posts }) => {
   const [category, setCategory] = useState(["All", "Tech", "User Interface"]);
-  const [filter, setFilter] = useState("All");
+  const [filters, setFilters] = useState("All");
 
   return (
     <div>
@@ -15,11 +17,11 @@ const index = () => {
             <button
               key={index}
               onClick={() => {
-                item === filter ? "" : setFilter(item);
+                item === filters ? "" : setFilters(item);
               }}
               className={classNames(
                 "bg-none border-none",
-                filter === item
+                filters === item
                   ? "underline underline-offset-8 decoration-solid decoration-neutral-darkGrey decoration-4 text-primary-grey"
                   : "text-neutral-darkGrey"
               )}
@@ -30,18 +32,55 @@ const index = () => {
         })}
       </div>
       <hr className="solid " />
+      {posts
+        .filter((post) => post.frontMatter.category.includes(filters))
+        .map((filtredPost, index) => {
+          return (
+            <div key={index}>
+              <article className="my-12 min-h-[94px]">
+                <h3 className="text-neutral-darkGrey mb-6 text-xs ">
+                  {filtredPost.frontMatter.date}
+                </h3>
+                <div className="flex justify-between ">
+                  <Link href={filtredPost.url}>
+                    <a className="text-xl ">{filtredPost.frontMatter.title}</a>
+                  </Link>
 
-      {/* Post 1 */}
-      {data.map((item, index) => {
-        console.log(item);
-        return (
-          <div key={index} className="my-12">
-            asd
-          </div>
-        );
-      })}
+                  <div className="grid grid-cols-2 ">
+                    {filtredPost.frontMatter.category.map((ctgy, index) => {
+                      return (
+                        <dic key={index}>
+                          {ctgy === "All" ? (
+                            " "
+                          ) : (
+                            <div className="grid gap-2 m-2">
+                              <span className="px-4 py-2 bg-neutral-lightGrey rounded">
+                                <a className="text-xs text-primary-grey">
+                                  # {ctgy}
+                                </a>
+                              </span>
+                            </div>
+                          )}
+                        </dic>
+                      );
+                    })}
+                  </div>
+                </div>
+              </article>
+              <hr className="solid " />
+            </div>
+          );
+        })}
     </div>
   );
 };
 
+// get all the mdx files in the pages folder
+export async function getStaticProps() {
+  return {
+    props: {
+      posts: await getAllNodes("post"),
+    },
+  };
+}
 export default index;

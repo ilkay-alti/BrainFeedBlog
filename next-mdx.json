@@ -1,0 +1,11 @@
+{
+  "post": {
+    "contentPath": "content/posts",
+    "basePath": "/",
+    "sortBy": "date",
+    "sortOrder": "desc"
+  },
+  "category": {
+    "contentPath": "content/categories"
+  }
+}
