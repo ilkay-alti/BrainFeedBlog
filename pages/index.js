@@ -49,19 +49,17 @@ const index = ({ posts }) => {
                   <div className="grid grid-cols-2 ">
                     {filtredPost.frontMatter.category.map((ctgy, index) => {
                       return (
-                        <dic key={index}>
-                          {ctgy === "All" ? (
-                            " "
-                          ) : (
-                            <div className="grid gap-2 m-2">
-                              <span className="px-4 py-2 bg-neutral-lightGrey rounded">
-                                <a className="text-xs text-primary-grey">
-                                  # {ctgy}
-                                </a>
-                              </span>
-                            </div>
-                          )}
-                        </dic>
+                        <div className="grid gap-2 m-2">
+                          <span className="px-4 py-2 bg-neutral-lightGrey rounded">
+                            {ctgy === "All" ? (
+                              " "
+                            ) : (
+                              <a className="text-xs text-primary-grey">
+                                # {ctgy}
+                              </a>
+                            )}
+                          </span>
+                        </div>
                       );
                     })}
                   </div>
