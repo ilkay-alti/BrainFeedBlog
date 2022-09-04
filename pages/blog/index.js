@@ -1,11 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import classNames from "classnames";
 import { getAllNodes } from "next-mdx/server";
 import Link from "next/link";
 
 const index = ({ posts }) => {
-  const [category, setCategory] = useState(["All", "Tech", "User Interface"]);
+  const [category, setCategory] = useState([]);
   const [filters, setFilters] = useState("All");
+
+  useEffect(() => {
+    posts.map((post) => {
+      post.frontMatter.category.map((ctgy) => {
+        category.includes(ctgy) ? "" : setCategory([...category, ctgy]);
+      });
+    });
+  }, [category]);
 
   return (
     <div>
@@ -54,22 +62,27 @@ const index = ({ posts }) => {
                         {ctgy === "All" ? (
                           index >= 4 ? (
                             <div className="flex  m-1">
-                              <span className="px-4 py-2 bg-neutral-lightGrey rounded max-h-10">
+                              <button className="px-4 py-2 bg-neutral-lightGrey rounded max-h-10">
                                 <a className="text-xs text-primary-grey">
                                   + {index - 3}
                                 </a>
-                              </span>
+                              </button>
                             </div>
                           ) : (
                             <></>
                           )
                         ) : index < 3 ? (
                           <div className="flex  m-1">
-                            <span className="px-4 py-2 bg-neutral-lightGrey rounded max-h-10">
+                            <button
+                              onClick={() => {
+                                ctgy === filters ? "" : setFilters(ctgy);
+                              }}
+                              className="px-4 py-2 bg-neutral-lightGrey rounded max-h-10"
+                            >
                               <a className="text-xs text-primary-grey">
                                 #{ctgy}
                               </a>
-                            </span>
+                            </button>
                           </div>
                         ) : (
                           ""

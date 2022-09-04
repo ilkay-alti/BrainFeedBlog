@@ -54,22 +54,32 @@ const index = ({ posts }) => {
                         {ctgy === "All" ? (
                           index >= 4 ? (
                             <div className="flex  m-1">
-                              <span className="px-4 py-2 bg-neutral-lightGrey rounded max-h-10">
+                              <button
+                                onClick={() => {
+                                  ctgy === filters ? "" : setFilters(ctgy);
+                                }}
+                                className="px-4 py-2 bg-neutral-lightGrey rounded max-h-10"
+                              >
                                 <a className="text-xs text-primary-grey">
                                   + {index - 3}
                                 </a>
-                              </span>
+                              </button>
                             </div>
                           ) : (
                             <></>
                           )
                         ) : index < 3 ? (
                           <div className="flex  m-1">
-                            <span className="px-4 py-2 bg-neutral-lightGrey rounded max-h-10">
+                            <button
+                              onClick={() => {
+                                ctgy === filters ? "" : setFilters(ctgy);
+                              }}
+                              className="px-4 py-2 bg-neutral-lightGrey rounded max-h-10"
+                            >
                               <a className="text-xs text-primary-grey">
                                 #{ctgy}
                               </a>
-                            </span>
+                            </button>
                           </div>
                         ) : (
                           ""
