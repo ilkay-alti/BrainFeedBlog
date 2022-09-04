@@ -2,10 +2,13 @@ import React, { useEffect, useState } from "react";
 import classNames from "classnames";
 import { getAllNodes } from "next-mdx/server";
 import Link from "next/link";
+import { useSelector } from "react-redux";
 
 const index = ({ posts }) => {
   const [category, setCategory] = useState([]);
-  const [filters, setFilters] = useState("All");
+  const [filters, setFilters] = useState(
+    useSelector((state) => state.data.filter)
+  );
 
   useEffect(() => {
     posts.map((post) => {

@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import classNames from "classnames";
 import { getAllNodes } from "next-mdx/server";
 import Link from "next/link";
-
+import { changeFilterState } from "../redux/dataSlice";
+import { useSelector, useDispatch } from "react-redux";
 const index = ({ posts }) => {
   const [category, setCategory] = useState(["All", "Tech", "User Interface"]);
-  const [filters, setFilters] = useState("All");
-
+  const filters = useSelector((state) => state.data.Filter);
+  console.log(filters);
+  const dispatch = useDispatch();
   return (
     <div>
       <h1 className="text-[24px] text-primary-grey">Recent Posts</h1>
@@ -17,7 +19,7 @@ const index = ({ posts }) => {
             <button
               key={index}
               onClick={() => {
-                item === filters ? "" : setFilters(item);
+                item === filters ? "" : dispatch(setFilters(item));
               }}
               className={classNames(
                 "bg-none border-none",
@@ -56,7 +58,9 @@ const index = ({ posts }) => {
                             <div className="flex  m-1">
                               <button
                                 onClick={() => {
-                                  ctgy === filters ? "" : setFilters(ctgy);
+                                  ctgy === filters
+                                    ? ""
+                                    : dispatch(setFilters(ctgy));
                                 }}
                                 className="px-4 py-2 bg-neutral-lightGrey rounded max-h-10"
                               >

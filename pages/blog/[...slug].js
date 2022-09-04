@@ -1,24 +1,30 @@
 import { getMdxNode, getMdxPaths } from "next-mdx/server";
-import Link from "next/link";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { changeFilterState } from "../../redux/dataSlice";
+import { useRouter } from "next/router";
 
 export default function BlogPost({ post }) {
-  console.log(post);
+  const [filters, setFilters] = useState(
+    useSelector((state) => state.data.filter)
+  );
+  const dispach = useDispatch();
+  const router = useRouter();
   return (
     <>
       <div>
         <h3 className="space-x-3">
-          {post.frontMatter.category.map((category) => {
+          {post.frontMatter.category.map((ctgy) => {
             return (
-              <Link href={`/blog`}>
-                <button
-                  onClick={() => {
-                    ctgy === filters ? "" : setFilters(ctgy);
-                  }}
-                  className="text-sm text-primary-grey"
-                >
-                  {category}
-                </button>
-              </Link>
+              <a
+                onClick={() => {
+                  dispach(changeFilterState(ctgy));
+                  router.replace("/blog");
+                }}
+                className="text-sm text-primary-grey"
+              >
+                {ctgy}
+              </a>
             );
           })}
         </h3>
