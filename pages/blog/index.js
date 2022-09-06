@@ -64,18 +64,25 @@ const index = ({ posts }) => {
                       <>
                         {ctgy === "All" ? (
                           index >= 4 ? (
-                            <div className="flex  m-1">
-                              <button className="px-4 py-2 bg-neutral-lightGrey rounded max-h-10">
+                            <div key={index} className="flex  m-1">
+                              <button
+                                onClick={() => {
+                                  ctgy === filters
+                                    ? ""
+                                    : dispatch(setFilters(ctgy));
+                                }}
+                                className="px-4 py-2 bg-neutral-lightGrey rounded max-h-10"
+                              >
                                 <a className="text-xs text-primary-grey">
                                   + {index - 3}
                                 </a>
                               </button>
                             </div>
                           ) : (
-                            <></>
+                            <div key={index}></div>
                           )
                         ) : index < 3 ? (
-                          <div className="flex  m-1">
+                          <div key={index} className="flex  m-1">
                             <button
                               onClick={() => {
                                 ctgy === filters ? "" : setFilters(ctgy);
