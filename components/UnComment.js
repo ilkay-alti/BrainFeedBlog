@@ -1,9 +1,7 @@
 import React from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 
-const UnComment = ({ callbackurl }) => {
-  console.log(callbackurl);
-
+const UnComment = () => {
   const { loginWithRedirect } = useAuth0();
   return (
     <div className="w-full h-[239px]">

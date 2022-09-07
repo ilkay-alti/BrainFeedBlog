@@ -1,6 +1,6 @@
 import { getMdxNode, getMdxPaths } from "next-mdx/server";
-import { useDispatch } from "react-redux";
-import { changeFilterState } from "../../redux/dataSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { changeFilterState, changeUrlState } from "../../redux/dataSlice";
 import { useRouter } from "next/router";
 import { useHydrate } from "next-mdx/client";
 import { mdxComponents } from "../../components/mdx-components";
@@ -8,17 +8,60 @@ import SvgGithub from "../../public/icons/Github";
 import SvgFacebook from "../../public/icons/Facebook";
 import SvgLinkedin from "../../public/icons/Linkedin";
 import SvgTwitter from "../../public/icons/Twitter";
-import Comment from "../../components/Comment";
 import { useAuth0 } from "@auth0/auth0-react";
 import UnComment from "../../components/UnComment";
+import { useEffect, useState } from "react";
+import { DateTime } from "luxon";
+
 export default function BlogPost({ post }) {
   const content = useHydrate(post, {
     components: mdxComponents,
   });
-  const dispach = useDispatch();
-  const router = useRouter();
-  const { isAuthenticated, user, logout } = useAuth0();
 
+  const router = useRouter();
+  const { isAuthenticated } = useAuth0();
+  const dispach = useDispatch();
+  const url = useSelector((state) => state.data.url);
+  const [comments, setComments] = useState([]);
+  const [text, setText] = useState("");
+  const { logout, getAccessTokenSilently } = useAuth0();
+
+  const fetchComment = async () => {
+    const query = new URLSearchParams({ url });
+    const newUrl = `/api/commentApi?${query.toString()}`;
+    const response = await fetch(newUrl, {
+      method: "GET",
+    });
+    const data = await response.json();
+    setComments(data);
+  };
+
+  useEffect(() => {
+    if (!url) return;
+    fetchComment();
+  }, [url]);
+
+  useEffect(() => {
+    dispach(changeUrlState(window.location.origin + window.location.pathname));
+    fetchComment();
+  });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const token = await getAccessTokenSilently();
+    const response = await fetch("/api/commentApi", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        text,
+        url,
+        token,
+      }),
+    });
+    const data = await response.json();
+    fetchComment();
+    setText("");
+  };
   return (
     <>
       <div>
@@ -80,10 +123,66 @@ export default function BlogPost({ post }) {
         <hr className="solid mb-12" />
 
         {isAuthenticated ? (
-          <Comment callbackurl={post.url} />
+          <div className="mb-16">
+            <h2 className="text-xl text-primary-grey mb-12">Add a Comment</h2>
+            <div>
+              <h4 className="text-base text-primary-grey">Message</h4>
+              <textarea
+                onChange={(e) => setText(e.target.value)}
+                className="rounded-sm row-span-2 backdrop-brightness-50 w-full min-h-24 outline-none bg-neutral-lightGrey p-3 "
+                placeholder="Hi there"
+                value={text}
+              />
+              <div className="flex justify-between">
+                <button
+                  onClick={handleSubmit}
+                  className="w-20 h-11 bg-primary-grey text-neutral-white text-base mt-6"
+                >
+                  Post
+                </button>
+
+                <button
+                  onClick={() => {
+                    logout();
+                    {
+                      returnTo: process.env.NEXT_PUBLIC_URL + "/blog";
+                    }
+                  }}
+                  className="w-20 h-11 bg-semantic-errorState text-neutral-white text-base mt-6"
+                >
+                  LogOut
+                </button>
+              </div>
+            </div>
+          </div>
         ) : (
-          <UnComment callbackurl={post.url} />
+          <UnComment />
         )}
+        {comments.map((comment, index) => {
+          return (
+            <>
+              <div key={index} className="flex ">
+                <img
+                  src={comment.user.picture}
+                  alt="user"
+                  className="max-w-[70px] max-h-[70px] mr-6"
+                />
+                <div>
+                  <div className="flex gap-6">
+                    <h3 className="text-sm text-primary-grey">
+                      {comment.user.name}
+                    </h3>
+                    <time>
+                      {DateTime.fromMillis(comment.createdAt).toRelative()}
+                    </time>
+                  </div>
+                  <p className=" text-primary-grey">{comment.text}</p>
+                </div>
+              </div>
+              <hr className="solid mb-12 my-8" />
+            </>
+          );
+        })}
       </div>
     </>
   );

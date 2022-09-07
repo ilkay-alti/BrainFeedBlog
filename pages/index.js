@@ -2,12 +2,10 @@ import React, { useState } from "react";
 import classNames from "classnames";
 import { getAllNodes } from "next-mdx/server";
 import Link from "next/link";
-import { changeFilterState } from "../redux/dataSlice";
 import { useSelector, useDispatch } from "react-redux";
 const index = ({ posts }) => {
   const [category, setCategory] = useState(["All", "Tech", "User Interface"]);
   const filters = useSelector((state) => state.data.Filter);
-  console.log(filters);
   const dispatch = useDispatch();
   return (
     <div>

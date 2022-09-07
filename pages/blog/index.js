@@ -19,7 +19,7 @@ const index = ({ posts }) => {
   }, [category]);
 
   return (
-    <div>
+    <>
       <h1 className="text-[24px] text-primary-grey">Recent Posts</h1>
 
       <div className="flex items-center space-x-[48px] mt-6 mb-1">
@@ -106,7 +106,7 @@ const index = ({ posts }) => {
             </div>
           );
         })}
-    </div>
+    </>
   );
 };
 
